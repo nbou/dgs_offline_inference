@@ -89,7 +89,8 @@ class Inference:
         results = {}
         # create a csv file to store the results, columns are image_name, patch_number, prediction
         df = pd.DataFrame(columns=['image_name', 'patch_number', 'prediction'])
-        df.to_csv(os.path.join(self.config.results_dir, 'inference_results.csv'), index=False)
+        csvpth = os.path.join(self.config.results_dir, 'inference_results.csv')
+        df.to_csv(csvpth, index=False)
 
         for root, _, files in os.walk(self.config.survey_dir):
             for file in files:
@@ -106,7 +107,7 @@ class Inference:
                     for i, pred in enumerate(output):
                         new_row = {'image_name': file, 'patch_number': i, 'prediction': pred}
                         df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-                    df.to_csv(os.path.join(self.config.survey_dir, 'inference_results.csv'), index=False)
+                    df.to_csv(csvpth, index=False)
                     print(f"Processed {file}")
         return results
 
