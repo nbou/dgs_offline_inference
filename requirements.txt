@@ -1,0 +1,4 @@
+torch>=2.1.0a0,<2.2
+pandas
+opencv-python
+onnxruntime
