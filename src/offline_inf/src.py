@@ -92,10 +92,10 @@ class Inference:
         # in the image
         results = {}
         # create a csv file to store the results, columns are image_name, patch_number, prediction
-        df = pd.DataFrame(columns=['image_name', 'patch_number', 'prediction'])
+        # df = pd.DataFrame(columns=['image_name', 'patch_number', 'prediction'])
         csvpth = os.path.join(self.config.results_dir, 'inference_results.csv')
 
-        df.to_csv(csvpth, index=False)
+        # df.to_csv(csvpth, index=False)
 
         # get the list of files to inference on
         files = self.config.data['filename_string']
@@ -112,11 +112,13 @@ class Inference:
             output = self.run_inference(input_data)
             results[file] = output
             # Append results to csv
+            newdf = []
             for i, pred in enumerate(output):
                 new_row = {'image_name': file, 'patch_number': i, 'prediction': pred}
-                df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-            df.to_csv(csvpth, index=False, mode='a', header=not os.path.exists(csvpth))
+                newdf.append(new_row) #pd.concat([newdf, pd.DataFrame([new_row])], ignore_index=True)
+            pd.DataFrame(newdf).to_csv(csvpth, index=False, mode='a', header=not os.path.exists(csvpth))
             print(f"Processed {file}")
+            print(len(newdf))
         return results
         #
         # for root, _, files in os.walk(self.config.survey_dir):
@@ -154,7 +156,7 @@ if __name__ == "__main__":
     cfg = InfConfig(
         survey_dir='../../data/sample_image_dir',
         model_path='../../data/model/Mobilenet-28-3-256-256.onnx',
-        nth_image=1,
+        nth_image=4,
         input_shape=(256, 256),
         input_layer_name='input',
     )
