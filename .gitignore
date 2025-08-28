@@ -1,3 +1,4 @@
 .idea
 2.1.0a0
-__pycache__
+*__pycache__/
+*.egg-info/

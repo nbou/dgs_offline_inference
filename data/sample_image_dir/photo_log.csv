@@ -1,0 +1,3 @@
+altitude,device_id,error_flag,error_message,exposure_time,filename_string,friendly_name,latitude,longitude,mark_next,navstatus,ping_depth,plugins,pressure_depth,preview_camera,recording_status,sensor_gain,sensor_temperature,sequence_dir,sequence_name,shutdown_status,speed_over_ground,subsample_rate,time_msecs,time_secs,version
+0,REEFSCAN_12,FALSE,,0,20220323_044028_400_0400.jpg,,0,0,FALSE,-2,-1,__name:=reefscan,-1,1,TRUE,0,0,REEFSCAN_12_19700101_004030_Seq02,19700101_004030_Seq02,FALSE,-1,1,741,2439,2.0.0
+0,REEFSCAN_12,FALSE,,10002,20220323_044028_700_0401.jpg,,0,0,FALSE,-2,-1,__name:=reefscan,-1,1,TRUE,18,51.7,REEFSCAN_12_19700101_004030_Seq02,19700101_004030_Seq02,FALSE,-1,1,990,2439,2.0.0

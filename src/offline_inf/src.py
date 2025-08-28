@@ -15,14 +15,18 @@ class InfConfig:
     def __init__(self,
                  survey_dir:str,
                  model_path:str,
+                 nth_image:int, # only inf every nth image
                  input_shape:tuple,
                  input_layer_name:str,
                  image_ext='.jpg',
                  gpu=False,
 ):
         self.survey_dir = survey_dir
-        self.input_shape = input_shape
+        self.model_path = model_path
+        self.nth_image = nth_image
 
+        self.input_shape = input_shape
+        self.data = pd.read_csv(os.path.join(survey_dir, 'photo_log.csv'))
         ts = 'inference_' + datetime.now().strftime('%Y%m%d-%H%M%S')
 
         self.results_dir = os.path.join(survey_dir, ts)
@@ -90,26 +94,49 @@ class Inference:
         # create a csv file to store the results, columns are image_name, patch_number, prediction
         df = pd.DataFrame(columns=['image_name', 'patch_number', 'prediction'])
         csvpth = os.path.join(self.config.results_dir, 'inference_results.csv')
+
         df.to_csv(csvpth, index=False)
 
-        for root, _, files in os.walk(self.config.survey_dir):
-            for file in files:
-                if file.endswith(self.config.image_ext):
-                    image_path = os.path.join(root, file)
-                    image = cv2.imread(image_path)
-                    if image is None:
-                        print(f"Warning: Unable to read image {image_path}. Skipping.")
-                        continue
-                    input_data = self.preprocess(image)
-                    output = self.run_inference(input_data)
-                    results[file] = output
-                    # Append results to csv
-                    for i, pred in enumerate(output):
-                        new_row = {'image_name': file, 'patch_number': i, 'prediction': pred}
-                        df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-                    df.to_csv(csvpth, index=False)
-                    print(f"Processed {file}")
+        # get the list of files to inference on
+        files = self.config.data['filename_string']
+        # extract every nth image (where n lives in self.config.nth_image)
+        files = files[::self.config.nth_image]
+
+        for file in files:
+            image_path = os.path.join(self.config.survey_dir, file)
+            image = cv2.imread(image_path)
+            if image is None:
+                print(f"Warning: Unable to read image {image_path}. Skipping.")
+                continue
+            input_data = self.preprocess(image)
+            output = self.run_inference(input_data)
+            results[file] = output
+            # Append results to csv
+            for i, pred in enumerate(output):
+                new_row = {'image_name': file, 'patch_number': i, 'prediction': pred}
+                df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+            df.to_csv(csvpth, index=False, mode='a', header=not os.path.exists(csvpth))
+            print(f"Processed {file}")
         return results
+        #
+        # for root, _, files in os.walk(self.config.survey_dir):
+        #     for file in files:
+        #         if file.endswith(self.config.image_ext):
+        #             image_path = os.path.join(root, file)
+        #             image = cv2.imread(image_path)
+        #             if image is None:
+        #                 print(f"Warning: Unable to read image {image_path}. Skipping.")
+        #                 continue
+        #             input_data = self.preprocess(image)
+        #             output = self.run_inference(input_data)
+        #             results[file] = output
+        #             # Append results to csv
+        #             for i, pred in enumerate(output):
+        #                 new_row = {'image_name': file, 'patch_number': i, 'prediction': pred}
+        #                 df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+        #             df.to_csv(csvpth, index=False, mode='a',header=not os.path.exists(csvpth))
+        #             print(f"Processed {file}")
+        # return results
 
 def img_to_grid(img, row, col):
     ww = [[i.min(), i.max()] for i in np.array_split(range(img.shape[0]), row)]
@@ -127,6 +154,7 @@ if __name__ == "__main__":
     cfg = InfConfig(
         survey_dir='../../data/sample_image_dir',
         model_path='../../data/model/Mobilenet-28-3-256-256.onnx',
+        nth_image=1,
         input_shape=(256, 256),
         input_layer_name='input',
     )
@@ -135,5 +163,7 @@ if __name__ == "__main__":
     results = inf.inf_directory()
     for img_name, output in results.items():
         print(f"Image: {img_name}, Output shape: {output.shape}")
+
+
 
 

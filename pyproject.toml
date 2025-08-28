@@ -1,0 +1,10 @@
+[build-system]
+requires = ["setuptools>=64.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "offline_inf"
+description = "Code to to run reefscan inference pipeline on after image collection"
+version = "0.1.0"
+readme = "README.md"
+dependencies = ["PyYAML==6.0.1"]
