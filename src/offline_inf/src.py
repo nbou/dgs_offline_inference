@@ -21,7 +21,7 @@ def generate_sys_cfg():
     root = tk.Tk()
     root.withdraw()  # Hide the main window
 
-    model_path = filedialog.askopenfilename(title="Select Model File", filetypes=[("ONNX files", "*.onnx"), ("All files", "*.*")])
+    model_path = filedialog.askopenfilename(title="Select Model File", initialdir='/app/data/model',filetypes=[("ONNX files", "*.onnx"), ("All files", "*.*")])
     external_drive_path = filedialog.askdirectory(title="Select External Drive Directory", initialdir='/media/data/RAW_DATA')
     results_dir = filedialog.askdirectory(title="Select Results Directory", initialdir='/media/data/PROCESSED_DATA')
     gpu = tk.messagebox.askyesno("GPU Usage", "Do you want to use GPU for inference if available?")
