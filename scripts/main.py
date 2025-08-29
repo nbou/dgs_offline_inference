@@ -6,10 +6,10 @@ import configparser
 
 if __name__ == '__main__':
     # first check if the system config file exists at ~/system_config.ini
-    if not os.path.exists(os.path.expanduser('~/system_config.ini')):
+    if not os.path.exists('/media/data/PROCESSED_DATA/system_config.ini'):
         generate_sys_cfg()
     else:
-        print("System config file found at ~/system_config.ini")
+        print("System config file found at PROCESSED_DATA/system_config.ini on the data drive")
 
     # load the system config info
     config = configparser.ConfigParser()

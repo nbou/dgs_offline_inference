@@ -35,10 +35,10 @@ def generate_sys_cfg():
         'gpu': str(gpu)
     }
 
-    with open(os.path.expanduser('~/system_config.ini'), 'w') as configfile:
+    with open('/media/data/PROCESSED_DATA/system_config.ini', 'w') as configfile:
         config.write(configfile)
 
-    print("Configuration saved to ~/system_config.ini")
+    print("Configuration saved to PROCESSED_DATA/system_config.ini")
 
 class InfConfig:
     def __init__(self,
