@@ -1,4 +1,5 @@
 torch>=2.1.0a0,<2.2
 pandas
-opencv-python
+numpy==2.0.0
+opencv-python==4.10.*
 onnxruntime
