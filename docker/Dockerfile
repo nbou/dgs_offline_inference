@@ -12,8 +12,11 @@ WORKDIR /app
 COPY . /app
 
 RUN pip3 install --upgrade pip \
-    && pip3 install --no-cache-dir --index-url https://pypi.org/simple -r requirements.txt \
+    && pip3 install --no-cache-dir --index-url https://pypi.jetson-ai-lab.io/jp6/cu126 -r requirements.txt \
     && pip3 install -e .
+
+# Set the DISPLAY environment variable
+ENV DISPLAY=$DISPLAY
 
 RUN chmod +x /app/runner.sh
 ENTRYPOINT ["/app/runner.sh"]
