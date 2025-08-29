@@ -18,5 +18,5 @@ RUN pip3 install --upgrade pip \
 # Set the DISPLAY environment variable
 ENV DISPLAY=$DISPLAY
 
-RUN chmod +x /app/runner.sh
-ENTRYPOINT ["/app/runner.sh"]
+#RUN chmod +x /app/runner.sh
+#ENTRYPOINT ["/app/runner.sh"]
