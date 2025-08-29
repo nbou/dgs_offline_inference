@@ -73,7 +73,7 @@ class InfConfig:
         self.input_layer_name = input_layer_name
         self.gpu = gpu
         self.model = self.load_model(model_path)
-        self.results_dir = os.path.join(results_dir, ts)
+        self.results_dir = os.path.join(results_dir, 'cam_{}'.format(self.cam_number), ts)
 
     def load_model(self, model_path):
         if self.gpu:
