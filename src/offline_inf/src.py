@@ -7,34 +7,69 @@ import torch
 import torchvision.transforms.functional as TF
 import os
 
-# from torch.utils.tensorboard.summary import image_boxes
 import pandas as pd
 from datetime import datetime
+
+# script to generate system config which contains the path to the model,
+# where the external drive is mounted and where the results will be stored
+
+import configparser
+from tkinter import filedialog
+import tkinter as tk
+
+def generate_sys_cfg():
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+
+    model_path = filedialog.askopenfilename(title="Select Model File", filetypes=[("ONNX files", "*.onnx"), ("All files", "*.*")])
+    external_drive_path = filedialog.askdirectory(title="Select External Drive Directory")
+    results_dir = filedialog.askdirectory(title="Select Results Directory")
+    gpu = tk.messagebox.askyesno("GPU Usage", "Do you want to use GPU for inference if available?")
+    config = configparser.ConfigParser()
+    config['Paths'] = {
+        'model_path': model_path,
+        'external_drive_path': external_drive_path,
+        'results_dir': results_dir,
+        'input_shape' : (256, 256),  # assuming a standard input shape, modify as needed
+        'input_layer_name' : 'input',  # modify as needed
+        'gpu': str(gpu)
+    }
+
+    with open(os.path.expanduser('~/system_config.ini'), 'w') as configfile:
+        config.write(configfile)
+
+    print("Configuration saved to ~/system_config.ini")
 
 class InfConfig:
     def __init__(self,
                  survey_dir:str,
+                 cam_number:int,
                  model_path:str,
                  nth_image:int, # only inf every nth image
                  input_shape:tuple,
                  input_layer_name:str,
-                 image_ext='.jpg',
                  gpu=False,
+                 results_dir=None
 ):
+
         self.survey_dir = survey_dir
+        if cam_number not in [1,2]:
+            raise ValueError("cam_number must be 1 or 2")
+        self.cam_number = cam_number
         self.model_path = model_path
         self.nth_image = nth_image
 
         self.input_shape = input_shape
-        self.data = pd.read_csv(os.path.join(survey_dir, 'photo_log.csv'))
+        self.data = pd.read_csv(os.path.join(survey_dir, 'cam_{}'.format(self.cam_number), 'photo_log.csv'))
+        self.image_dir = os.path.join(survey_dir, 'cam_{}'.format(self.cam_number))
         ts = 'inference_' + datetime.now().strftime('%Y%m%d-%H%M%S')
 
-        self.results_dir = os.path.join(survey_dir, ts)
-        os.makedirs(self.results_dir, exist_ok=True)
+        # self.results_dir = os.path.join(survey_dir, ts)
+        # os.makedirs(self.results_dir, exist_ok=True)
         self.input_layer_name = input_layer_name
-        self.image_ext = image_ext
         self.gpu = gpu
         self.model = self.load_model(model_path)
+        self.results_dir = results_dir
 
     def load_model(self, model_path):
         if self.gpu:
@@ -49,7 +84,15 @@ class Inference:
     def __init__(self, config:InfConfig):
         self.config = config
         self.session = config.model
+        self.results_dir = self.config.results_dir
+        os.makedirs(self.results_dir, exist_ok=True)
 
+        # self.config.results_dir = self.results_dir
+        # write config to results dir for record keeping
+        with open(os.path.join(self.results_dir, 'inference_config.txt'), 'w') as f:
+            for key, value in self.config.__dict__.items():
+                if key != 'model' or key != 'data':  # don't write the model or data to file
+                    f.write(f"{key}: {value}\n")
 
     def preprocess(self, image):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -93,7 +136,7 @@ class Inference:
         results = {}
         # create a csv file to store the results, columns are image_name, patch_number, prediction
         # df = pd.DataFrame(columns=['image_name', 'patch_number', 'prediction'])
-        csvpth = os.path.join(self.config.results_dir, 'inference_results.csv')
+        csvpth = os.path.join(self.results_dir, 'inference_results.csv')
 
         # df.to_csv(csvpth, index=False)
 
@@ -103,7 +146,7 @@ class Inference:
         files = files[::self.config.nth_image]
 
         for file in files:
-            image_path = os.path.join(self.config.survey_dir, file)
+            image_path = os.path.join(self.config.image_dir, file)
             image = cv2.imread(image_path)
             if image is None:
                 print(f"Warning: Unable to read image {image_path}. Skipping.")
@@ -118,7 +161,6 @@ class Inference:
                 newdf.append(new_row) #pd.concat([newdf, pd.DataFrame([new_row])], ignore_index=True)
             pd.DataFrame(newdf).to_csv(csvpth, index=False, mode='a', header=not os.path.exists(csvpth))
             print(f"Processed {file}")
-            print(len(newdf))
         return results
         #
         # for root, _, files in os.walk(self.config.survey_dir):
@@ -152,19 +194,19 @@ def cropper(images, width, height):
     start_y = (H - height) // 2
     return images[:, start_y:start_y + height, start_x:start_x + width]
 
-if __name__ == "__main__":
-    cfg = InfConfig(
-        survey_dir='../../data/sample_image_dir',
-        model_path='../../data/model/Mobilenet-28-3-256-256.onnx',
-        nth_image=4,
-        input_shape=(256, 256),
-        input_layer_name='input',
-    )
-
-    inf = Inference(cfg)
-    results = inf.inf_directory()
-    for img_name, output in results.items():
-        print(f"Image: {img_name}, Output shape: {output.shape}")
+# if __name__ == "__main__":
+#     cfg = InfConfig(
+#         survey_dir='../../data/sample_image_dir',
+#         model_path='../../data/model/Mobilenet-28-3-256-256.onnx',
+#         nth_image=4,
+#         input_shape=(256, 256),
+#         input_layer_name='input',
+#     )
+#
+#     inf = Inference(cfg)
+#     results = inf.inf_directory()
+#     for img_name, output in results.items():
+#         print(f"Image: {img_name}, Output shape: {output.shape}")
 
 
 

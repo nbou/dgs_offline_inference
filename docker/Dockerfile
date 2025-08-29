@@ -8,8 +8,12 @@ ARG L4T_IMG_TAG=r36.4.0
 # if the above link fails use this instead
 FROM dustynv/l4t-ml:${L4T_IMG_TAG}
 
-RUN pip3 install --upgrade pip
-RUN pip3 install -r requirements.txt
-
+WORKDIR /app
 COPY . /app
+
+RUN pip3 install --upgrade pip \
+    && pip3 install --no-cache-dir --index-url https://pypi.org/simple -r requirements.txt \
+    && pip3 install -e .
+
+RUN chmod +x /app/runner.sh
 ENTRYPOINT ["/app/runner.sh"]

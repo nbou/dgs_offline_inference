@@ -2,3 +2,5 @@
 2.1.0a0
 *__pycache__/
 *.egg-info/
+data/sample_image_dir/inference*
+ data/sample_results/

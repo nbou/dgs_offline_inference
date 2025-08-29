@@ -1,0 +1,23 @@
+survey_dir: C:/Users/nboutros/OneDrive - Australian Institute of Marine Science/Projects/2025/08-rs_offline_inf/data/sample_image_dir
+cam_number: 1
+model_path: C:/Users/nboutros/OneDrive - Australian Institute of Marine Science/Projects/2025/08-rs_offline_inf/data/model/Mobilenet-28-3-256-256.onnx
+nth_image: 2
+input_shape: (256, 256)
+data:    altitude    device_id  error_flag  ...  time_msecs  time_secs version
+0         0  REEFSCAN_12       False  ...         741       2439   2.0.0
+1         0  REEFSCAN_12       False  ...         990       2439   2.0.0
+2         0  REEFSCAN_12       False  ...         741       2439   2.0.0
+3         0  REEFSCAN_12       False  ...         741       2439   2.0.0
+4         0  REEFSCAN_12       False  ...         741       2439   2.0.0
+5         0  REEFSCAN_12       False  ...         741       2439   2.0.0
+6         0  REEFSCAN_12       False  ...         741       2439   2.0.0
+7         0  REEFSCAN_12       False  ...         741       2439   2.0.0
+8         0  REEFSCAN_12       False  ...         741       2439   2.0.0
+
+[9 rows x 26 columns]
+image_dir: C:/Users/nboutros/OneDrive - Australian Institute of Marine Science/Projects/2025/08-rs_offline_inf/data/sample_image_dir\cam_1
+input_layer_name: input
+gpu: False
+torch_device: cpu
+model: <onnxruntime.capi.onnxruntime_inference_collection.InferenceSession object at 0x00000184A6AAB9E0>
+results_dir: C:/Users/nboutros/OneDrive - Australian Institute of Marine Science/Projects/2025/08-rs_offline_inf/data/sample_results\sample_image_dir
