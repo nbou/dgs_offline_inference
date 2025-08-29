@@ -1,7 +1,9 @@
-name: dgs_offline_inference
+name: dgs_offline_tester_bm
 services:
-    dgs_offline:
-        build: ./docker
+  dgs_offline_tester_bm:
+        build: 
+          context: .
+          dockerfile: ./docker/Dockerfile
         runtime: nvidia
         tty: true
         network_mode: host
@@ -11,4 +13,4 @@ services:
             - /media/jetson/asv_data/PROCESSED_DATA:/media/data/PROCESSED_DATA
         environment:
             - DISPLAY=$DISPLAY
-        image: dgs_offline
+        image: dgs_offline_tester_bm

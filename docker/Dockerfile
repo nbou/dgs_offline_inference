@@ -11,11 +11,14 @@ FROM dustynv/l4t-ml:${L4T_IMG_TAG}
 WORKDIR /app
 COPY . /app
 
+ENV PYTHONPATH=/app
+
 RUN apt-get update && apt-get install -y python3-tk
 
 RUN pip3 install --no-cache-dir --index-url https://pypi.jetson-ai-lab.io --upgrade pip 
-RUN pip3 install --no-cache-dir --index-url https://pypi.org/simple -r requirements.txt 
-RUN pip3 install --no-cache-dir --index-url https://pypi.org/simple -e .
+RUN pip3 install --no-cache-dir --index-url https://pypi.org/simple -r /app/requirements.txt 
+RUN pip3 install --no-cache-dir --index-url https://pypi.org/simple -e /app
+RUN pip3 install --no-cache-dir --index-url https://pypi.org/simple pyproj
 
 
 # Set the DISPLAY environment variable
