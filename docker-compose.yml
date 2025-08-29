@@ -1,4 +1,4 @@
-name: dgs_offline_tester_bm
+name: dgs_offline_bm
 services:
   dgs_offline_tester_bm:
         build: 
@@ -13,4 +13,4 @@ services:
             - /media/jetson/asv_data/PROCESSED_DATA:/media/data/PROCESSED_DATA
         environment:
             - DISPLAY=$DISPLAY
-        image: dgs_offline_tester_bm
+        image: dgs_offline_bm
