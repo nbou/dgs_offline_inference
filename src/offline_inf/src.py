@@ -73,7 +73,7 @@ class InfConfig:
         self.input_layer_name = input_layer_name
         self.gpu = gpu
         self.model = self.load_model(model_path)
-        self.results_dir = results_dir
+        self.results_dir = os.path.join(results_dir, ts)
 
     def load_model(self, model_path):
         if self.gpu:
@@ -329,19 +329,22 @@ def cropper(images, width, height):
 
 
 
-# if __name__ == "__main__":
-#     cfg = InfConfig(
-#         survey_dir='../../data/sample_image_dir',
-#         model_path='../../data/model/Mobilenet-28-3-256-256.onnx',
-#         nth_image=4,
-#         input_shape=(256, 256),
-#         input_layer_name='input',
-#     )
-#
-#     inf = Inference(cfg)
-#     results = inf.inf_directory()
-#     for img_name, output in results.items():
-#         print(f"Image: {img_name}, Output shape: {output.shape}")
+if __name__ == "__main__":
+    cfg = InfConfig(
+        survey_dir='../../data/sample_image_dir/',
+        model_path='../../data/model/Mobilenet-28-3-256-256.onnx',
+        nth_image=4,
+        input_shape=(256, 256),
+        input_layer_name='input',
+        cam_number=1,
+        gpu=False,
+        results_dir='../../sample_results'
+    )
+
+    inf = Inference(cfg)
+    results = inf.inf_directory()
+    for img_name, output in results.items():
+        print(f"Image: {img_name}, Output shape: {output.shape}")
 
 
 
