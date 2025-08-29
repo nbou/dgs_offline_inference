@@ -1,4 +1,5 @@
-## Code to run Deployment inference on data collected by ReefScan/ASV
+## DGS Offline Inference
+Code to run Deployment inference on data collected by ReefScan/ASV
 
 ---
 
@@ -64,3 +65,13 @@ docker run command:
 ```bash
     docker run --runtime nvidia -it --network=host  -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY dgs_offline
 ```
+
+
+---
+### Authors:
+-[Nader Boutros](https://github.com/nbou)
+
+-[Ben Moshirian](https://github/bmoshirian)
+
+Incorporating code developed by [Matthew Beikoff](https://github.com/mbeikoff) and 
+[Scarlett Raine](https://github.com/sgraine)
