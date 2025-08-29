@@ -1,0 +1,14 @@
+name: dgs_offline_inference
+services:
+    dgs_offline:
+        build: ./docker
+        runtime: nvidia
+        tty: true
+        network_mode: host
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - /media/jetson/asv_data/RAW_DATA:/media/data/RAW_DATA
+            - /media/jetson/asv_data/PROCESSED_DATA:/media/data/PROCESSED_DATA
+        environment:
+            - DISPLAY=$DISPLAY
+        image: dgs_offline
