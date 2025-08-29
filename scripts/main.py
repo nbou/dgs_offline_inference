@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     # load the system config info
     config = configparser.ConfigParser()
-    config.read(os.path.expanduser('~/system_config.ini'))
+    config.read('/media/data/PROCESSED_DATA/system_config.ini')
     model_path = config['Paths']['model_path']
     external_drive_path = config['Paths']['external_drive_path']
     results_dir = config['Paths']['results_dir']
