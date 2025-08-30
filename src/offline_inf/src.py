@@ -197,7 +197,7 @@ class Inference:
             # simple math, since total patch number is 28 *2  = 56 for max score. 
             # a score of 0 or 1 is no deploy. Thus >=28 is deploy.
             overall_deploy = 'No'
-            if sum(patch_geo_centres[2]) >= 28:
+            if sum(patch_inference_result[2] for patch_inference_result in patch_geo_centres) >= 28:
                 overall_deploy = 'Yes'
             
 
