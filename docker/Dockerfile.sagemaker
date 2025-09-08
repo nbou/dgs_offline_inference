@@ -1,0 +1,30 @@
+
+ARG PYTHON_VERSION=310
+ARG CUDA_VERSION=121
+ARG PYTORCH_VERSION=2.2.0
+ARG UBUNTU_VERSION=20.04
+
+# get label_studio_workflow from our existing image to leverage layer caching
+FROM 211125554839.dkr.ecr.ap-southeast-2.amazonaws.com/daai/label_studio_workflow:3.10 AS builder1
+FROM 211125554839.dkr.ecr.ap-southeast-2.amazonaws.com/daai/mlops-tool:3.10 AS builder2
+
+# Use the official PyTorch image from AWS SageMaker as a base image
+FROM 763104351884.dkr.ecr.ap-southeast-2.amazonaws.com/pytorch-training:${PYTORCH_VERSION}-gpu-py${PYTHON_VERSION}-cu${CUDA_VERSION}-ubuntu${UBUNTU_VERSION}-ec2
+
+WORKDIR /app
+COPY . /app
+
+ENV PYTHONPATH=/app
+
+RUN apt-get update && apt-get install -y python3-tk \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install --no-cache-dir --index-url https://pypi.jetson-ai-lab.io --upgrade pip 
+RUN pip3 install --no-cache-dir --index-url https://pypi.org/simple -r /app/requirements.txt 
+RUN pip3 install --no-cache-dir --index-url https://pypi.org/simple -e /app
+RUN pip3 install --no-cache-dir --index-url https://pypi.org/simple pyproj onnxruntime
+
+COPY --from=builder1 /app /lib/daai_label_studio_workflow
+COPY --from=builder2 /app /lib/daai_ml_pipelines
+RUN pip install --no-cache-dir --index-url https://pypi.org/simple -e /lib/daai_label_studio_workflow
+RUN pip install --no-cache-dir --index-url https://pypi.org/simple -e /lib/daai_ml_pipelines
