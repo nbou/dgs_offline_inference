@@ -13,7 +13,7 @@ fi
 
 # Container Parameters
 CONTAINER_NAME="daai-dgs"
-CONTAINER_TAG="11.8"
+CONTAINER_TAG="12.1"
 
 # ECR Repository Setup
 REGION="ap-southeast-2"

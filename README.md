@@ -36,6 +36,20 @@ docker compose build
 docker compose up
 ```
 
+#### Sagemaker Integration
+To align with the existing docker (ie. pytorch2.2), the official AWS DL image is `2.2.0-gpu-py310-cu221-ubuntu20.04`
+
+Build and push to AWS ECR for versioning.
+```shell
+chmod +x docker/build_and_push.sh
+./docker/build_and_push.sh
+
+# Or Local Build Only
+./docker/build_and_push.sh build-only
+```
+
+
+
 ---
 ### Usage:
 
