@@ -71,9 +71,13 @@ docker run command:
 You can run the script without the GUI by pointing the runner script to scripts/main_nogui.py. 
 Simply edit runner.sh to change the script that is run, and add the required arguments:
 ```bash
-python3 scripts/main_nogui.py --input_dir
+python3 scripts/main_nogui.py /path/to/survey/dir cam_number nth_im
+```
 
-
+e.g. the following will run on camera 1, every 10th image in the survey directory:
+```bash
+python3 scripts/main_nogui.py /path/to/survey/dir 1 10
+```
 
 ---
 ### Authors:

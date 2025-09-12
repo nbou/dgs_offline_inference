@@ -38,7 +38,7 @@ if __name__ == '__main__':
     parser = ArgumentParser(description="Run inference on survey data without GUI")
     parser.add_argument("survey_dir", type=str, help="Path to the survey directory")
     parser.add_argument("cam_number", type=int, choices=[1, 2], help="Camera number (1 or 2)")
-    parser.add_argument("--nth_image", type=int, default=1, help="Process every nth image (default: 1)")
+    parser.add_argument("nth_image", type=int, default=1, help="Process every nth image (default: 1)")
     args = parser.parse_args()
 
     # survey_dir = filedialog.askdirectory(
