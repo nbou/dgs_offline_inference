@@ -66,6 +66,14 @@ docker run command:
     docker run --runtime nvidia -it --network=host  -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY dgs_offline
 ```
 
+---
+### To run without GUI (e.g. over ssh):
+You can run the script without the GUI by pointing the runner script to scripts/main_nogui.py. 
+Simply edit runner.sh to change the script that is run, and add the required arguments:
+```bash
+python3 scripts/main_nogui.py --input_dir
+
+
 
 ---
 ### Authors:
