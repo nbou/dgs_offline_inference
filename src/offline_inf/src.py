@@ -44,6 +44,27 @@ def generate_sys_cfg():
 
     print("Configuration saved to PROCESSED_DATA/system_config.ini")
 
+def generate_sys_cfg_nogui(model_pth,
+                           external_drive_pth,
+                           results_pth,
+                           input_shape=(256,256),
+                           input_layer_name='input',
+                           gpu=False):
+    config = configparser.ConfigParser()
+    config['Paths'] = {
+        'model_path': model_pth,
+        'external_drive_path': external_drive_pth,
+        'results_dir': results_pth,
+        'input_shape' : input_shape,  # assuming a standard input shape, modify as needed
+        'input_layer_name' : input_layer_name,  # modify as needed
+        'gpu': str(gpu)
+    }
+    with open('/media/data/PROCESSED_DATA/system_config.ini', 'w') as configfile:
+        config.write(configfile)
+
+    print("Configuration saved to PROCESSED_DATA/system_config.ini")
+
+
 class InfConfig:
     def __init__(self,
                  survey_dir:str,
