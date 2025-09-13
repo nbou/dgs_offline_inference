@@ -199,6 +199,10 @@ class Inference:
             overall_deploy = 'No'
             if sum(patch_inference_result[2] for patch_inference_result in patch_geo_centres) >= 28:
                 overall_deploy = 'Yes'
+
+            roi = 'No'
+            if sum(patch_inference_result[2] for patch_inference_result in patch_geo_centres) > 0:
+                roi = 'Yes'
             
 
             newdf = []
@@ -215,7 +219,8 @@ class Inference:
                     'ping_depth': ping_depth,
                     'pressure_depth': pressure_depth,
                     'speed_over_ground': speed_over_ground,
-                    'overall_deploy': overall_deploy
+                    'overall_deploy': overall_deploy,
+                    'roi': roi
                 }
                 newdf.append(new_row) #pd.concat([newdf, pd.DataFrame([new_row])], ignore_index=True)
             pd.DataFrame(newdf).to_csv(csvpth, index=False, mode='a', header=not os.path.exists(csvpth))
