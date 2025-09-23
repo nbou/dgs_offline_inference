@@ -194,6 +194,10 @@ class Inference:
             input_data = self.preprocess(image)
             output = self.run_inference(input_data)
             results[file] = output
+
+            # BM230925 add inference overlay to images and save to a folder
+            self.inferenceOverlay(image,output,file)
+            
             # Append results to csv
             # BM 290825 this is where I should add the GPS and other relevant data.
             
@@ -334,6 +338,57 @@ class Inference:
         extended_centers = [(patch_lat, patch_lon, decision) for (patch_lat, patch_lon), decision in zip(centers, patch_decisions)]
         
         return extended_centers
+
+
+    def inferenceOverlay(self, image, outputInferencePatchResult, imgFileName, row=4,col=7):
+        # create an overlay over every patch
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        patches, _, _ = img_to_grid(image, row, col)
+
+        LABEL_COLORS = {
+            0: (168, 43, 43),   # Red
+            1: (50,103,166),   # Blue
+            2: (0, 255, 131),   # Green
+        }
+
+        # add masks to the patches
+
+        masked_patches = []
+        alpha = 0.2
+        for idx, patch in enumerate(patches):
+            label = outputInferencePatchResult[idx]
+            color = LABEL_COLORS.get(label)
+            masked_patch = self.apply_mask_overlay(patch, color, alpha=alpha)
+            masked_patches.append(masked_patch)
+
+        # reconstitute the images
+        maskedImage = self.grid_to_image(masked_patches,row,col)
+        
+        # save masked images to a folder in processed data
+        maskFolderPath = os.path.join(self.results_dir,'masked_imgs')
+
+        maskImagePath = os.path.join(self.results_dir,'masked_imgs',imgFileName)
+        if not os.path.exists(maskFolderPath):
+            os.makedirs(maskFolderPath)
+        cv2.imwrite(maskImagePath, cv2.cvtColor(maskedImage, cv2.COLOR_RGB2BGR))
+        
+
+        
+    def apply_mask_overlay(self,patch, color, alpha=0.4):
+        """Overlay semi-transparent color mask on a patch."""
+        overlay = np.full_like(patch, color, dtype=np.uint8)
+        return cv2.addWeighted(patch, 1 - alpha, overlay, alpha, 0)
+
+    def grid_to_image(self,patches, row=4, col=7):
+        rows = []
+        idx = 0
+        for i in range(row):
+            row_patches = []
+            for j in range(col):
+                row_patches.append(patches[idx])
+                idx += 1
+            rows.append(np.concatenate(row_patches, axis=1))
+        return np.concatenate(rows, axis=0)
 
 def img_to_grid(img, row, col):
     ww = [[i.min(), i.max()] for i in np.array_split(range(img.shape[0]), row)]
