@@ -4,3 +4,4 @@
 *.egg-info/
 data/sample_image_dir/inference*
  data/sample_results/
+testimg.jpg

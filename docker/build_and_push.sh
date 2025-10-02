@@ -2,18 +2,29 @@
 set -e
 
 # This script builds a Docker image and pushes it to a specified registry.
-# Usage: ./build_and_push.sh build-only | push-only | build-and-push (default)
-ACTION=${1:-build-and-push}
+# Usage: ./build_and_push.sh [--sagemaker] [--login] build-only | push-only | build-and-push (default)
+
+# Parse arguments
+LOGIN=false
+ACTION="build-and-push"
+
+for arg in "$@"; do
+  if [[ "$arg" == "--login" ]]; then
+    LOGIN=true
+  elif [[ "$arg" == "build-only" || "$arg" == "push-only" || "$arg" == "build-and-push" ]]; then
+    ACTION="$arg"
+  fi
+done
 
 if [[ "$ACTION" != "build-only" && "$ACTION" != "push-only" && "$ACTION" != "build-and-push" ]]; then
-    echo "Invalid argument: $ACTION"
-    echo "Usage: ./build_and_push.sh build-only | push-only | build-and-push (default)"
+    echo "Invalid action argument"
+    echo "Usage: ./build_and_push.sh [--sagemaker] build-only | push-only | build-and-push (default)"
     exit 1
 fi
 
 # Container Parameters
 CONTAINER_NAME="daai-dgs"
-CONTAINER_TAG="12.1"
+CONTAINER_TAG="sagemaker-12.1"
 
 # ECR Repository Setup
 REGION="ap-southeast-2"
@@ -30,8 +41,10 @@ echo "ECR Repository: $ECR_CONTAINER_NAME"
 echo "Tag: $CONTAINER_TAG"
 
 # Login to both AWS Official ECR and our ECR
-aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $AWS_ECR_URI
-aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ECR_URI
+if [[ "$LOGIN" == true ]]; then
+    aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $AWS_ECR_URI
+    aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ECR_URI
+fi
 
 # build the Docker image
 if [[ "$ACTION" == "build-only" ]] || [[ "$ACTION" == "build-and-push" ]]; then

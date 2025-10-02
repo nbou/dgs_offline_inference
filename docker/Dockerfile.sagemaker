@@ -25,7 +25,7 @@ RUN pip3 install --no-cache-dir --index-url https://pypi.org/simple -e /app
 RUN pip3 install --no-cache-dir --index-url https://pypi.org/simple pyproj onnxruntime
 
 # Re-install SageMaker training toolkit to restore 'train' entrypoint if removed by dependency resolution
-RUN pip3 install --no-cache-dir --index-url https://pypi.org/simple --upgrade --force-reinstall sagemaker-training
+RUN pip3 install --no-cache-dir --index-url https://pypi.org/simple --upgrade --force-reinstall --timeout 600 --retries 5 sagemaker-training
 
 COPY --from=builder1 /app /lib/daai_label_studio_workflow
 COPY --from=builder2 /app /lib/daai_ml_pipelines
